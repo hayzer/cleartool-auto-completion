@@ -2,6 +2,11 @@ This is a first version of the ClearCase 'cleartool' Linux console command auto-
 
 For copyright information see COPYING
 
+NOTE: 
+I've spotted a similar project on http://www.rssnet.org/bashcc.html, but:
+1. It seams to be quite outdated. 
+2. It does not use the bash-completion framework.
+
 Requirements:
  
  * bash-completion must be installed
@@ -13,9 +18,8 @@ Install:
 
 Limitations:
 
- * Probably different ClearCase versions will have new cleartool
-   subcommands and probably missing some old onces. 
-   Let me know about this.
+ * Probably different ClearCase versions may have new cleartool
+   subcommands and may be missing some old subcommands and options. 
 
 Todo:
 
