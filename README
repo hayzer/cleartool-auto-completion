@@ -1,0 +1,25 @@
+This is a first version of the ClearCase 'cleartool' Linux console command auto-completion.
+
+For copyright information see COPYING
+
+Requirements:
+ 
+ * bash-completion must be installed
+
+Install:
+
+ * copy cleartool file into /etc/bash_completion.d/ directory
+ * source /etc/bash_completion.d/cleartool
+
+Limitations:
+
+ * Probably different ClearCase versions will have new cleartool
+   subcommands and probably missing some old onces. 
+   Let me know about this.
+
+Todo:
+
+ * Most of the dynamic commands completion are missing.
+   Currently I only support completion of 'setactivity' subcommand.
+   Other subcommands in that manner does not complete what you've may
+   expect.

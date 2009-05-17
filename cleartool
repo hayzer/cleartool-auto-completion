@@ -1,0 +1,117 @@
+############################################################################
+#             Completion file for the cleartool utility
+############################################################################
+#
+#     Copyrigth 2009 Thomas Maier <hayzer@gmail.com>,
+#
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+############################################################################
+
+# "cleartool" command should be in PATH.
+# Other way update here its full path.
+CLEARTOOL=cleartool
+
+_basic_commands() {
+	declare ct=${CLEARTOOL}
+
+	# This is the dynamic way to create this list but it's slower
+	# then the used bellow.
+	# declare secondary_list="$( ${ct} help|awk '/Usage/{print $2}' )"
+	declare secondary_list="help man apropos quit cd pwd shell mkview chview rmview lsview startview endview setview edcs catcs setcs pwv lsprivate recoverview reformatview getcache setcache update get checkvob mkvob rmvob lsvob reformatvob relocate mount umount space dospace getlog lsclients hostinfo chflevel protect protectvob lock unlock lslock mkeltype mkbrtype mklbtype mkattype mkhltype mktrtype lstype rmtype chtype cptype mkpool lspool rmpool chpool lsreplica chmaster lsmaster reqmaster rename ln rmname move file mkdir mkelem rmelem mkbranch rmbranch rmver checkout uncheckout checkin reserve unreserve lscheckout chevent mklabel rmlabel mkattr rmattr mkhlink rmhlink mktrigger rmtrigger diff merge rmmerge findmerge find ls describe lshistory lsvtree annotate lsdo rmdo catcr diffcr winkin mktag rmtag register unregister mkregion rmregion lsregion mkstgloc rmstgloc lsstgloc lssite setsite setrgysvrtype mkactivity rmactivity mkfolder rmfolder mkproject rmproject mkstream rmstream setactivity chfolder chproject chstream chactivity mkcomp rmcomp lscomp mkbl rmbl chbl lsbl diffbl lsfolder lsproject lsstream lsactivity deliver rebase setplevel schedule"
+	echo "${secondary_list}"
+}
+
+_help_command() {
+	declare  cmd="${1}"
+	declare   ct=${CLEARTOOL}
+	declare -a help=( $( ${ct} help ${cmd}|tr -d '[\|]\|}\|{\|)\|(' ) )
+
+	for opt in ${help[@]}; do
+		if [[ "${opt}" == -* ]]; then
+			echo ${opt}
+		fi
+	done
+}
+
+_current_activities() {
+	declare   ct=${CLEARTOOL}
+	declare acts="$( ${ct} lsactivity | awk '{print $2}' )"
+
+	echo "${acts}"
+}
+
+_get_lsview() {
+	declare    ct=${CLEARTOOL}
+	declare views="$( ${ct} lsview )"
+
+	echo "${views}"
+}
+
+_ct_commands() {
+
+	# This function should return COMPREPLAY array with all
+	# the subcommands
+
+	COMPREPLY=()
+	declare help_list command
+	declare         ct=${CLEARTOOL}
+	declare basic_list="$( _basic_commands )"
+
+	declare cur=${COMP_WORDS[COMP_CWORD]}
+	declare prev=${COMP_WORDS[COMP_CWORD-1]}
+
+	if [ $COMP_CWORD -gt 1 ]; then
+		if [[ ${cur} = -* ]]; then
+		    help_list="$( _help_command ${COMP_WORDS[1]} )"
+			COMPREPLY=( $(compgen -W "$( echo ${help_list} )" -- ${cur}) )
+#		else
+#			_filedir 
+		fi
+	fi
+
+	# Those are special cases for subcommands completion.
+	# I guess there are many more. For example: merge.
+	case ${prev} in
+	help|man)
+		COMPREPLY=( $(compgen -W "$( echo ${basic_list}|sed -n 's/help\|man//p')" -- ${cur}) )
+		return 0
+		;;
+	setactivity)
+		if [[ ${cur} = -* ]]; then
+			help_list="$( _help_command setactivity )"
+			COMPREPLY=( $(compgen -W "$( echo ${help_list} )" -- ${cur}) )
+		else
+			declare activities="$( _current_activities )"
+			COMPREPLY=( $(compgen -W "$( echo ${activities} )" -- ${cur}) )
+		fi
+		return 0
+		;;
+	lsview)
+		declare get_lsview="$( _get_lsview )"
+		COMPREPLY=( $(compgen -W "$( echo ${get_lsview} )" -- ${cur}) )
+		return 0
+		;;
+	esac
+
+	if [ $COMP_CWORD -eq 1 ]; then
+		COMPREPLY=( $(compgen -W "$( echo ${basic_list} )" -- ${cur}) )
+	fi
+
+#	_filedir 
+}
+
+complete -F _ct_commands -o default cleartool ct
+
+# vim ts=4 sw=4 syn=sh :
