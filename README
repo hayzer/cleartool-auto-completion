@@ -3,9 +3,12 @@ This is a first version of the ClearCase 'cleartool' Linux console command auto-
 For copyright information see COPYING
 
 NOTE: 
-I've spotted a similar project on http://www.rssnet.org/bashcc.html, but:
+I've spotted a similar projects. One on http://www.rssnet.org/bashcc.html, but:
 1. It seams to be quite outdated. 
 2. It does not use the bash-completion framework.
+
+And second on http://jan.tomka.name/work/bash-clearcase/bash-clearcase,
+which seams to be much more mature then this one. Did not test it yet.
 
 Requirements:
  
